@@ -19,7 +19,7 @@ $(function() {
                     labels:confLabel,
                     datasets:[
                         {
-                            label:"연령대 별 확진",
+                            label:r.dt+" 연령대 별 확진",
                             data:confArr,
                             backgroundColor:["rgba(46, 0, 226, 0.25)"]
                         }
@@ -154,6 +154,44 @@ $(function() {
         }
     })
 
+    $.ajax({
+        type:"get",
+        url:"/api/corona/vaccine/today",
+        success:function(r) {
+            console.log(r);
+
+            let regionArr = new Array();
+            let firstArr = new Array();
+            let secondArr = new Array();
+
+            for(let i=0; i<r.data.length; i++) {
+                regionArr.push(r.data[i].region);
+                firstArr.push(r.data[i].firstCnt);
+                secondArr.push(r.data[i].secondCnt);
+            }
+
+            let ctx3 = $("#vaccine_chart");
+            let vaccineChart = new Chart(ctx3, {
+                type:'bar',
+                options:{
+                    responsive:false
+                },
+                data:{
+                    labels:regionArr,
+                    datasets:[{
+                        label:"1차 접종현황",
+                        data:firstArr,
+                        backgroundColor:['rgba(16, 195, 143, 1)']
+                    },
+                    {
+                        label:"2차 접종현황",
+                        data:secondArr,
+                        backgroundColor:['rgba((100, 161, 179, 1)']
+                    }]
+                }
+            });
+        }
+    })
 
     // let ctx2 = $("#confirmed_chart");
     // let confirmed_chart = new Chart(ctx2, {
@@ -172,26 +210,5 @@ $(function() {
     //         ]
     //     }
     // })
-    let ctx3 = $("#vaccine_chart");
-    let vaccineChart = new Chart(ctx3, {
-        type:'bar',
-        options:{
-            responsive:false
-        },
-        data:{
-            labels:['seoul', 'daegu', 'incheon', 'busan', 'gyeongnam', 'gyeongbuk', 'chungnam', 'gangwon', 
-            'daejeon', 'chungbuk', 'gwangju', 'ulsan', 'jeonbuk', 'jeonnam', 'jeju', 'sejong'],
-            datasets:[{
-                label:"2021-08-09 1차 접종현황",
-                data:[415, 408, 86, 123, 88, 30, 68, 24, 42, 39, 19, 25, 21, 14, 11, 1],
-                backgroundColor:['rgba(16, 195, 143, 1)']
-            },
-            {
-                label:"2021-08-09 2차 접종현황",
-                data:[415, 408, 86, 123, 88, 30, 68, 24, 42, 39, 19, 25, 21, 14, 11, 1],
-                backgroundColor:['rgba((100, 161, 179, 1)']
-            }]
-        }
-    });
 
 })
