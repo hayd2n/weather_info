@@ -3,7 +3,7 @@ package com.greenart.service;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +40,26 @@ public class CoronaInfoService {
         // 현재시간이 세팅값보다 이전이라면, 전 날 데이터를 뽑아주고
         // 현재시간이 세팅값보다 나중이라면, 오늘 데이터를 뽑아준다.
         
-        Date now = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String date = formatter.format(now);
 
-        CoronaInfoVO data = mapper.selectCoronaInfoByDate(date);
+        Calendar now = Calendar.getInstance();
+        Calendar standard = Calendar.getInstance();
+        standard.set(Calendar.HOUR_OF_DAY, 10);
+        standard.set(Calendar.MINUTE, 30);
+        standard.set(Calendar.SECOND, 00);
+
+        if(now.getTimeInMillis() < standard.getTimeInMillis()) {
+            // 현재 접속시간이 기준시간 (10시30분10초) 보다 이전일 때
+            // 하루 이전 날짜로 변경.
+            now.add(Calendar.DATE, -1);
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String dt = formatter.format(now.getTime());
+        // Date now = new Date();
+        // SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        // String date = formatter.format(now);
+
+
+        CoronaInfoVO data = mapper.selectCoronaInfoByDate(dt);
 
         Integer accExamCnt = data.getAccExamCnt();
         Integer decideCnt = data.getDecideCnt();
